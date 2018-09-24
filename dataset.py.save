@@ -15,20 +15,18 @@ class Prostate_Dataset(data.Dataset):
     def __init__(self, img_dir):
         self.img_dir = img_dir
         self.dataframe = create_df(img_dir)
-        #print(self.dataframe)
-        self.dataframe.to_csv('df.csv',sep='\t')
+        print(self.dataframe)
     
 
     def __getitem__(self, index):
 
         label = self.dataframe.iloc[index,1] 
         img = np.load(os.path.join(self.img_dir,self.dataframe.iloc[index,0]))
-        #print(img.shape)      
+	
         img = torch.from_numpy(img)
         img = img.float()
-        img = torch.stack([img,img,img],0)
-        sample = {'image':img, 'label':float(label)}
-        
+        img = torch.cat([img,img,img],2)
+        sample = {'image':img, 'label':int(label)}
         return sample 
 
     def __len__(self):
